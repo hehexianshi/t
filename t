@@ -163,7 +163,7 @@ install() {
         make
         make install
 
-        cp BASE_VERSIONS_DOWN/$version/php.ini-development $BASE_VERSION_DIR/$version/etc/php.ini
+        cp $BASE_VERSIONS_DOWN/$version/php.ini-development $BASE_VERSION_DIR/$version/etc/php.ini
         cp $BASE_VERSIONS_DIR/$version/etc/php-fpm.conf.default $BASE_VERSIONS_DIR/$version/etc/php-fpm.conf
 
         ln -f -s $BASE_VERSIONS_DIR/$version $BASE_DIR/php
