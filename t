@@ -196,16 +196,17 @@ install_extension() {
             mkdir $name
             rm -rf $name/*
 
-            tar -zxvf "$name".tgz -C $name
+            local tar_info=`tar -zxvf "$name".tgz -C $name`
 
             cd $name
             cd $name-*
 
             check_current_version
-            $BASE_DIR/php/bin/phpize
-            ./configure --with-php-config="$BASE_DIR/php/bin/php-config"
-            make
-            info=`make install`
+
+            local phpize_info=`$BASE_DIR/php/bin/phpize`
+            local configure_info=`./configure --with-php-config="$BASE_DIR/php/bin/php-config"`
+            local make_info=`make`
+            local info=`make install`
 
             for i in $info; do
                 local path=$i
