@@ -212,7 +212,7 @@ install_extension() {
                 local path=$i
             done
 
-            // add extension
+            #add extension
             case $name in
                 xdebug)
                     echo "zend_extension=$i$name.so" >> "$BASE_DIR/php/etc/php.ini"
