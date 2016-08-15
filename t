@@ -5,6 +5,7 @@ DOWN=$'\033[B'
 BASE_DIR='/usr/local/phpt'
 BASE_VERSIONS_DIR='/usr/local/phpt/version'
 BASE_VERSIONS_DOWN='/usr/local/phpt/phpdown'
+BASE_VERSION_PECL='/usr/local/phpt/pecl'
 VERSION='0.0.1'
 
 log() {
@@ -20,6 +21,8 @@ init() {
         mkdir $BASE_DIR
         mkdir $BASE_VERSIONS_DIR
         mkdir $BASE_VERSIONS_DOWN
+        mkdir $BASE_VERSION_PECL
+
         cd $BASE_VERSIONS_DIR
     fi
 }
@@ -156,12 +159,77 @@ install() {
         tar -jxvf $name
         mv "php-$version" $version
         cd $BASE_VERSIONS_DOWN/$version
-        ./configure --prefix="$BASE_VERSIONS_DIR/$version" --enable-fpm --enable-bcmath --with-curl --with-mysql --with-mysqli --with-openssl --with-gd --enable-pcntl
+        ./configure --prefix="$BASE_VERSIONS_DIR/$version" --with-config-file-path="$BASE_VERSIONS_DIR/$version/"etc --enable-fpm --enable-bcmath --with-curl --with-mysql --with-mysqli --with-openssl --with-gd --enable-pcntl
         make
         make install
+
+        cp ./php.ini-development $BASE_VERSION_DIR/$version/etc/php.ini
+        cp $BASE_VERSIONS_DIR/$version/php-fpm.conf.default $BASE_VERSIONS_DIR/$version/php-fpm.conf
+
         ln -f -s $BASE_VERSIONS_DIR/$version $BASE_DIR/php
         ln -f -s $BASE_VERSIONS_DIR/$version/bin/php /usr/bin/php
+        ln -f -s $BASE_VERSIONS_DIR/$version/sbin/fpm /usr/bin/php-fpm
     fi
+    exit 1
+}
+
+install_extension() {
+    local name=$1
+    local version=$2
+    if test "$name" == ""; then
+        echo "./t -e ***"
+        exit 1
+    fi
+
+    local proto="http"
+    if test "$version" == ""; then
+        local url="pecl.php.net/get/$1"
+    else
+        local url="pecl.php.net/get/$1"-"$2".tgz
+    fi
+
+    local http_code=`curl -I -m 10 -o /dev/null -s -w %{http_code} $url`
+    case $http_code in
+        200)
+            cd $BASE_VERSION_PECL
+            wget "$proto"://"$url" -O "$name".tgz
+            mkdir $name
+            rm -rf $name/*
+
+            tar -zxvf "$name".tgz -C $name
+
+            cd $name
+            cd $name-*
+
+            check_current_version
+            $BASE_DIR/php/bin/phpize
+            ./configure --with-php-config="$BASE_DIR/php/bin/php-config"
+            make
+            info=`make install`
+
+            for i in $info; do
+                local path=$i
+            done
+
+            // add extension
+            case $name in
+                xdebug)
+                    echo "zend_extension=$i$name.so" >> "$BASE_DIR/php/etc/php.ini"
+                    ;;
+                *)
+                    echo "extension=$i$name.so" >> "$BASE_DIR/php/etc/php.ini"
+                    ;;
+            esac
+
+            ;;
+        *)
+            echo "$name is not found"
+            exit 1
+        ;;
+
+    esac
+
+
     exit 1
 }
 
@@ -176,6 +244,8 @@ usage() {
     example:
         ./t 5.4.28
         ./t -v
+        ./t -e yaml 1.2.0
+        ./t -e yaml  //new
         ./t -h
         ./t
 EOF
@@ -190,6 +260,7 @@ else
     case $1 in
         -v) display_t_version;exit;;
         -h) usage;exit;;
+        -e) install_extension $2 $3;exit;;
         *) install $1; exit;;
 
     esac
