@@ -99,9 +99,10 @@ active() {
     local version=$1
     check_current_version 
     if test "$version" != "$current"; then 
-        ln -f -s "$BASE_VERSIONS_DIR/$version" /usr/local/phpc
+        #ln -f -s "$BASE_VERSIONS_DIR/$version" /usr/local/phpc
         if [ -f "$BASE_VERSIONS_DIR/$version/bin/php" ]; then
             ln -f -s "$BASE_VERSIONS_DIR/$version/bin/php" /usr/bin/php
+            ln -f -s "$BASE_VERSIONS_DIR/$version/sbin/php-fpm" /usr/local/sbin/php-fpm
         fi
     fi
     #touch "$BASE_VERSIONS_DIR/$version" 
@@ -168,7 +169,7 @@ install() {
 
         ln -f -s $BASE_VERSIONS_DIR/$version $BASE_DIR/php
         ln -f -s $BASE_VERSIONS_DIR/$version/bin/php /usr/bin/php
-        ln -f -s $BASE_VERSIONS_DIR/$version/sbin/php-fpm /usr/bin/php-fpm
+        ln -f -s $BASE_VERSIONS_DIR/$version/sbin/php-fpm /usr/local/sbin/php-fpm 
     fi
     exit 1
 }
