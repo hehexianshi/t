@@ -160,11 +160,11 @@ install() {
         tar -jxvf $name
         mv "php-$version" $version
         cd $BASE_VERSIONS_DOWN/$version
-        ./configure --prefix="$BASE_VERSIONS_DIR/$version" --with-config-file-path="$BASE_VERSIONS_DIR/$version/"etc --enable-fpm --enable-bcmath --with-curl --with-mysql --with-mysqli --with-openssl --with-gd --enable-pcntl
+        ./configure --prefix="$BASE_VERSIONS_DIR/$version" --with-config-file-path="$BASE_VERSIONS_DIR/$version/"etc --enable-fpm --enable-bcmath --with-curl --with-mysql --with-mysqli --with-openssl --with-gd --enable-pcntl --enable-debug --with-pdo-mysql --enable-soap --enable-pcntl --with-freetype-dir --with-jpeg-dir --with-png-dir --enable-gd-native-ttf 
         make
         make install
 
-        cp $BASE_VERSIONS_DOWN/$version/php.ini-development $BASE_VERSION_DIR/$version/etc/php.ini
+        cp $BASE_VERSIONS_DOWN/$version/php.ini-development $BASE_VERSIONS_DIR/$version/etc/php.ini
         cp $BASE_VERSIONS_DIR/$version/etc/php-fpm.conf.default $BASE_VERSIONS_DIR/$version/etc/php-fpm.conf
 
         ln -f -s $BASE_VERSIONS_DIR/$version $BASE_DIR/php
