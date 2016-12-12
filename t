@@ -13,10 +13,12 @@ log() {
 }
 
 init() {
-    if [ ! -w "$BASE_DIR" ]; then
+    if [ `whoami` = "root" ]; then
         echo "must use root(Permission denied)"
         exit 1
     fi
+
+
     if [ ! -d "$BASE_DIR" ]; then
         mkdir $BASE_DIR
         mkdir $BASE_VERSIONS_DIR
