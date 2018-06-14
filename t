@@ -151,24 +151,26 @@ install() {
     done
 
     if test "$has" == 1; then
-        ln -f -s $BASE_VERSIONS_DIR/$version $BASE_DIR/php
+        rm -rf $BASE_DIR/php
+        ln -s $BASE_VERSIONS_DIR/$version $BASE_DIR/php
         ln -s $BASE_VERSIONS_DIR/$version/bin/php /usr/bin/php
     fi
 
     if test "$has" == 0; then
         local name="php-"$version".tar.bz2"
         cd $BASE_VERSIONS_DOWN
-        wget "http://tw1.php.net/get/php-"$version".tar.bz2/from/this/mirror" -O "$name"
+        wget "http://tw2.php.net/get/php-"$version".tar.bz2/from/this/mirror" -O "$name"
         tar -jxvf $name
         mv "php-$version" $version
         cd $BASE_VERSIONS_DOWN/$version
-        ./configure --prefix="$BASE_VERSIONS_DIR/$version" --with-config-file-path="$BASE_VERSIONS_DIR/$version/"etc --enable-fpm --enable-bcmath --with-curl --with-mysql --with-mysqli --with-openssl --with-gd --enable-pcntl --enable-debug --with-pdo-mysql --enable-soap --enable-pcntl --with-freetype-dir --with-jpeg-dir --with-png-dir --enable-gd-native-ttf 
+        ./configure --prefix="$BASE_VERSIONS_DIR/$version" --with-config-file-path="$BASE_VERSIONS_DIR/$version/"etc --enable-fpm --enable-bcmath --with-curl --with-mysql --with-mysqli --with-openssl --with-gd --enable-pcntl --enable-debug --with-pdo-mysql --enable-soap --enable-pcntl --with-freetype-dir --with-jpeg-dir --with-png-dir --enable-gd-native-ttf --with-zip --with-mbstring 
         make
         make install
 
         cp $BASE_VERSIONS_DOWN/$version/php.ini-development $BASE_VERSIONS_DIR/$version/etc/php.ini
         cp $BASE_VERSIONS_DIR/$version/etc/php-fpm.conf.default $BASE_VERSIONS_DIR/$version/etc/php-fpm.conf
 
+        rm -rf $BASE_DIR/php
         ln -f -s $BASE_VERSIONS_DIR/$version $BASE_DIR/php
         ln -f -s $BASE_VERSIONS_DIR/$version/bin/php /usr/bin/php
         ln -f -s $BASE_VERSIONS_DIR/$version/sbin/php-fpm /usr/local/sbin/php-fpm 
