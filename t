@@ -13,7 +13,7 @@ log() {
 }
 
 init() {
-    if [ `whoami` = "root" ]; then
+    if [ `whoami` != "root" ]; then
         echo "must use root(Permission denied)"
         exit 1
     fi
