@@ -103,6 +103,8 @@ active() {
     if test "$version" != "$current"; then 
         #ln -f -s "$BASE_VERSIONS_DIR/$version" /usr/local/phpc
         if [ -f "$BASE_VERSIONS_DIR/$version/bin/php" ]; then
+            rm /usr/bin/php
+            rm /usr/local/sbin/php-fpm
             ln -f -s "$BASE_VERSIONS_DIR/$version/bin/php" /usr/bin/php
             ln -f -s "$BASE_VERSIONS_DIR/$version/sbin/php-fpm" /usr/local/sbin/php-fpm
         fi
@@ -159,7 +161,7 @@ install() {
     if test "$has" == 0; then
         local name="php-"$version".tar.bz2"
         cd $BASE_VERSIONS_DOWN
-        wget "http://tw2.php.net/get/php-"$version".tar.bz2/from/this/mirror" -O "$name"
+        wget "http://php.net/get/php-"$version".tar.bz2/from/this/mirror" -O "$name"
         tar -jxvf $name
         mv "php-$version" $version
         cd $BASE_VERSIONS_DOWN/$version
